@@ -1,7 +1,7 @@
 app = "sniper-fly"
 
 [build]
-  image = "sniper-fly"
+  dockerfile = "Dockerfile"
 
 [env]
   PYTHONUNBUFFERED = "1"
