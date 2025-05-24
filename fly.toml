@@ -1,10 +1,10 @@
 app = "sniper-fly"
 
 [build]
-  builder = "Docker"
+  image = "sniper-fly"
 
 [env]
-  # Tu peux ajouter ici des variables si tu veux, mais on utilise les secrets Fly.io à la place
+  PYTHONUNBUFFERED = "1"
 
 [[services]]
   internal_port = 8080
