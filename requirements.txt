@@ -1,5 +1,5 @@
 flask
-web3[tester]
+web3==5.31.3
 requests
 python-dotenv
 matplotlib
