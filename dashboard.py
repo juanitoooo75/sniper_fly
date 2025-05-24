@@ -173,5 +173,5 @@ def victory():
     return send_file("victory.mp3", mimetype='audio/mpeg')
 
 if __name__ == "__main__":
-    print("\u2705 Dashboard lanc\u00e9 avec succ\u00e8s")
-    app.run(debug=True)
+    print("✅ Dashboard lancé avec succès")
+    app.run(host="0.0.0.0", port=8080)
