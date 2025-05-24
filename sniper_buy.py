@@ -24,7 +24,7 @@ else:
     print(f"🔐 Wallet : {WALLET_ADDRESS}")
 
 # Factory PancakeSwap V2
-factory_address = Web3.to_checksum_address("0xCA143Ce32Fe78f1f7019d7d551a6402fC5350c73")
+factory_address = Web3.toChecksumAddress("0xCA143Ce32Fe78f1f7019d7d551a6402fC5350c73")
 factory_abi = json.loads("""[
   {
     "anonymous": false,
