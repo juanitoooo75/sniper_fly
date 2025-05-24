@@ -9,7 +9,7 @@ def is_token_safe(token_address, web3):
         response = requests.get(f"https://api.honeypot.is/v1/IsHoneypot?address={token_address}&chain=bsc")
         data = response.json()
 
-        if not data["honeypotResult"]["isHoneypot"]:
+        if "honeypotResult" in data and not data["honeypotResult"].get("isHoneypot", True):
             buy_tax = data["simulationResult"]["buyTax"]
             sell_tax = data["simulationResult"]["sellTax"]
             gas_used = data["simulationResult"]["gasUsed"]
