@@ -16,7 +16,7 @@ RPC_URL = os.getenv("RPC_URL")
 web3 = Web3(Web3.HTTPProvider(RPC_URL))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-if not web3.is_connected():
+if not web3.isConnected():
     print("❌ Connexion échouée à la blockchain.")
     exit()
 else:
