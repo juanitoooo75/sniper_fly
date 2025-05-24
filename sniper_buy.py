@@ -1,79 +1,45 @@
 from web3 import Web3
-from web3.middleware import geth_poa_middleware
-from dotenv import load_dotenv
 import os
 import json
-import time
-from token_checker import is_token_safe
+from dotenv import load_dotenv
 
-# Chargement des variables
+# Charger les variables d’environnement
 load_dotenv()
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 WALLET_ADDRESS = os.getenv("WALLET_ADDRESS")
-RPC_URL = os.getenv("RPC_URL")
 
-# Connexion à la BSC
-web3 = Web3(Web3.HTTPProvider(RPC_URL))
-web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+# Fonction d’achat de token
+def buy_token(token_address, pair_address, web3):
+    print(f"💸 Tentative d'achat du token : {token_address}")
 
-if not web3.isConnected():
-    print("❌ Connexion échouée à la blockchain.")
-    exit()
-else:
-    print("✅ Connecté à la blockchain.")
-    print(f"🔐 Wallet : {WALLET_ADDRESS}")
+    router_address = Web3.toChecksumAddress("0x10ED43C718714eb63d5aA57B78B54704E256024E")  # PancakeSwap Router V2
+    router_abi_path = os.path.join(os.path.dirname(__file__), 'abis', 'pancake_router_v2.json')
 
-# Factory PancakeSwap V2
-factory_address = Web3.toChecksumAddress("0xCA143Ce32Fe78f1f7019d7d551a6402fC5350c73")
-factory_abi = json.loads("""[
-  {
-    "anonymous": false,
-    "inputs": [
-      {"indexed": true, "internalType": "address", "name": "token0", "type": "address"},
-      {"indexed": true, "internalType": "address", "name": "token1", "type": "address"},
-      {"indexed": false, "internalType": "address", "name": "pair", "type": "address"},
-      {"indexed": false, "internalType": "uint256", "name": "", "type": "uint256"}
-    ],
-    "name": "PairCreated",
-    "type": "event"
-  }
-]""")
+    with open(router_abi_path, 'r') as file:
+        router_abi = json.load(file)
 
-factory_contract = web3.eth.contract(address=factory_address, abi=factory_abi)
-base_token = Web3.to_checksum_address("0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c")  # WBNB
+    router = web3.eth.contract(address=router_address, abi=router_abi)
 
-def handle_event(event):
-    token0 = event["args"]["token0"]
-    token1 = event["args"]["token1"]
-    pair_address = event["args"]["pair"]
+    nonce = web3.eth.getTransactionCount(WALLET_ADDRESS)
+    deadline = web3.eth.getBlock("latest")["timestamp"] + 60  # 60s
 
-    print(f"\n🔥 Nouvelle paire détectée !\nToken0: {token0}\nToken1: {token1}\nPair: {pair_address}")
+    # Montant de BNB à utiliser (0.01 BNB par exemple)
+    bnb_amount = web3.toWei(0.01, 'ether')
 
-    # Vérifie si l'un des tokens est du WBNB
-    if token0 == base_token:
-        new_token = token1
-    elif token1 == base_token:
-        new_token = token0
-    else:
-        print("❌ Aucun token BNB détecté. Ignoré.")
-        return
+    tx = router.functions.swapExactETHForTokensSupportingFeeOnTransferTokens(
+        0,  # min amount out
+        [Web3.toChecksumAddress("0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"), Web3.toChecksumAddress(token_address)],
+        WALLET_ADDRESS,
+        deadline
+    ).buildTransaction({
+        'from': WALLET_ADDRESS,
+        'value': bnb_amount,
+        'gas': 250000,
+        'gasPrice': web3.toWei('5', 'gwei'),
+        'nonce': nonce
+    })
 
-    # Vérifie si le token est sûr
-    if is_token_safe(new_token, web3):
-        print("✅ Token validé. Achat en cours...")
-        buy_token(new_token, pair_address, web3)
-    else:
-        print("🚫 Token dangereux détecté. Ignoré.")
+    signed_tx = web3.eth.account.sign_transaction(tx, private_key=PRIVATE_KEY)
+    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-def log_loop(poll_interval):
-    print("👂 En attente de nouveaux tokens...")
-    while True:
-        try:
-            event_filter = factory_contract.events.PairCreated.create_filter(fromBlock='latest')
-            for event in event_filter.get_new_entries():
-                handle_event(event)
-        except Exception as e:
-            print(f"⚠️ Erreur de filtre : {e}")
-        time.sleep(poll_interval)
-
-log_loop(2)
+    print(f"✅ Transaction envoyée ! TX Hash : {web3.toHex(tx_hash)}")
