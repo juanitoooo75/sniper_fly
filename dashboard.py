@@ -62,7 +62,7 @@ def get_level_info(gain_usd):
 @app.route("/")
 def dashboard():
     bnb_price = get_bnb_price()
-    bnb_balance = float(web3.from_wei(web3.eth.get_balance(wallet_address), 'ether'))
+    bnb_balance = float(Web3.from_wei(web3.eth.get_balance(wallet_address), 'ether'))
 
     try:
         with open(TRACKER_FILE, "r") as f:
