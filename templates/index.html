@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; font-src 'self'; img-src 'self' data:;">
+  <link rel="icon" type="image/png" href="/static/favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script defer src="/static/dashboard.js"></script>
+  <title>Sniper Bot Dashboard</title>
+</head>
+<body class="dark-theme">
+  <main>
+    <header>
+      <h1>$$$JUAN.MCLOVIN$$$</h1>
+      <div class="goal-progress">
+        <div class="bar" id="progress-bar-inner"></div>
+        <span>$1000 0000</span>
+      </div>
+    </header>
+
+    <section class="overview">
+      <div class="status">
+        <p><span id="clock"></span><br/>
+        Solde BNB : <strong id="bnb_balance">0</strong><br/>
+        Guardian Wallet : <span id="guardianStatus">🧠 En cours...</span><br/>
+        Niveau actuel : <strong id="level">LEVEL 0</strong></p>
+        <button id="launchBot">🚀 Lancer le bot</button>
+        <button onclick="location.reload()">🔄 Restart</button>
+      </div>
+
+      <div class="performance">
+        <h2><span id="gain_emoji"></span> <span id="gain_usd">$0</span></h2>
+        <p>Pertes : <span id="loss_usd">-$0</span></p>
+        <canvas id="performanceChart"></canvas>
+        <button id="testSniper">Tester un-bot</button>
+        <button id="testSafe">Tester un token SAFE</button>
+        <button id="resetSim">Reset Simulation</button>
+      </div>
+    </section>
+
+    <section class="gains">
+      <h2>📊 Gains / Pertes</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Tokens Possédés</h3>
+          <table id="tokens_table"><tr><th>Symbole</th><th>Quantité</th></tr></table>
+        </div>
+        <div class="card">
+          <h3>Positions ouvertes</h3>
+          <table id="positions_table"><tr><th>Token</th><th>Montant</th><th>Prix achat</th></tr></table>
+        </div>
+        <div class="card">
+          <h3>Trades clôturés</h3>
+          <table id="trades_table"><tr><th>Token</th><th>Gain %</th><th>Prix achat</th><th>Prix vente</th></tr></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="gmgn">
+      <h2>🔍 Signaux GMGN</h2>
+      <table id="gmgn_table">
+        <thead><tr><th>Wallet</th><th>Winrate</th><th>Tokens récemment</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="gmgn-action">
+        <h3>🤖 Activer en réel</h3>
+        <button>Activer en réel</button>
+      </div>
+    </section>
+
+    <section class="export">
+      <h2>📁 Historique & Export</h2>
+      <a href="/download_csv" download>📄 Télécharger les trades en CSV</a>
+    </section>
+
+    <section class="levels">
+      <h2>🏆 Niveaux débloqués</h2>
+      <table>
+        <tr><th>Rang</th><th>Statut</th></tr>
+        <tr><td>🥱 LEVEL 0</td><td>✅</td></tr>
+        <tr><td>🎯 LEVEL 1 (≥ 1 000$)</td><td>❌</td></tr>
+        <tr><td>🧢 LEVEL 2 (≥ 10 000$)</td><td>❌</td></tr>
+        <tr><td>🎯 LEVEL 3 (≥ 100 000$)</td><td>❌</td></tr>
+        <tr><td>💀 LEVEL 4 (≥ 500 000$)</td><td>❌</td></tr>
+        <tr><td>👑 LEVEL 5 (1 000 000$)</td><td>❌</td></tr>
+      </table>
+    </section>
+  </main>
+
+  <audio id="launchSound" src="/static/launch.mp3" preload="auto"></audio>
+</body>
+</html>
